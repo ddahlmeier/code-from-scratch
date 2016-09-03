@@ -25,10 +25,19 @@ import random
 class Node(object):
     """base node class for trees"""
 
-    def __init__(self, value):
+    def __init__(self, value, children=[]):
         self.value = value
-        self.children = []
+        self.children = children
         self.parent = None
+
+    def __str__(self, level=0):
+        ret = "  "*level+repr(self.value)+"\n"
+        for child in self.children:
+            ret += child.__str__(level+1)
+        return ret
+
+    def __repr__(self):
+        return "<BinaryNode value = %s>" % self.value
 
 
 class BinaryNode(Node):
@@ -39,9 +48,6 @@ class BinaryNode(Node):
         self.children = [None, None]
         self.left = self.children[0]
         self.right = self.children[1]
-
-    def __repr__(self):
-        return "<BinaryNode value = %s>" % self.value
 
 
 class RedBlackNode(BinaryNode):
@@ -248,4 +254,23 @@ def print_tree(node, space=""):
         print "%s  -" % space
 
 
+def make_balanced_tree(height, n=2):
+    """ create a balanced n-ary tree"""
+    root = Node(0, [])
+    queue = [(root, 0)]
+    while queue:
+        node, level = queue.pop(0)
+        if level < height:
+            for i in range(n):
+                child = Node((n*node.value)+1+i, [])
+                node.children.append(child)
+                queue.append((child, level+1))
+    return root
 
+
+if __name__ == "__main__":
+    tree = make_balanced_tree(3, 2)
+    print(tree)
+
+    tree = make_balanced_tree(3, 3)
+    print(tree)
