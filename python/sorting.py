@@ -10,11 +10,11 @@ def quick_sort(items):
         # base case: empty list is ordered
         return []
     else:
-        # recursion: concat sorted list smaller elements, pivot and
-        # sorted list of larger elements
+        # recursion: concat sorted list smaller elements,
+        # pivot and sorted list of larger elements
         pivot = items[0]
-        return quick_sort(filter(lambda x: x <= pivot, items[1:])) + [pivot] +\
-            quick_sort(filter(lambda x: x > pivot, items[1:]))
+        return quick_sort(filter(lambda x: x <= pivot, items[1:])) + \
+            [pivot] + quick_sort(filter(lambda x: x > pivot, items[1:]))
 
 
 def merge_sort(items):
