@@ -3,6 +3,8 @@ https://en.wikipedia.org/wiki/Heap_(data_structure)
 """
 # Author: Daniel Dahlmeier <ddahlmeier@gmail.com>
 
+import nose
+
 
 def parent(i):
     """return index of parent"""
@@ -36,16 +38,11 @@ def heapify(heap, i, end=None):
     """
     if end is None:
         end = len(heap)-1
-    print "heapify", heap, i, end
-    print [(heap[child(i)], child(i)) for child in [left, right]
-           if child(i) <= end]
     largest, j = max([(heap[child(i)], child(i)) for child in [left, right]
                       if child(i) <= end] or [(heap[i], i)])
-    print "largest", largest, j
     if i != j and largest > heap[i]:
-        print "swap", i, j
         swap(heap, i, j)
-        heapify(heap, j)
+        heapify(heap, j, end)
 
 
 def peek(heap):
@@ -78,11 +75,9 @@ def sift_up(heap, i):
 
 def heap_sort(array):
     """sort array using heap"""
-    print "heap_sort", array
     build_heap(array)
     end = len(array)-1
     while end > 0:
-        print "heap_sort", array
         swap(array, 0, end)
         end -= 1
         heapify(array, 0, end)
@@ -95,3 +90,26 @@ def print_heap(heap, i=0, space=""):
         print_heap(heap, left(i), space + "  ")
     if right(i) < len(heap):
         print_heap(heap, right(i), space + "  ")
+
+
+def test_build_heap():
+    array = [2, 12, 17, 4, 5, 2, 4, 1]
+    build_heap(array)
+    # test heap property for each node
+    for i in xrange(len(array)//2):
+        if left(i) < len(array):
+            nose.tools.assert_true(array[i] >= array[left(i)])
+        if right(i) < len(array):
+            nose.tools.assert_true(array[i] >= array[right(i)])
+
+
+def test_heapify():
+    array = [2, 4, 5]
+    heapify(array, 0)
+    nose.tools.assert_equals([5, 4, 2], array)
+
+
+def test_heap_sort():
+    array = [2, 12, 17, 4, 5, 2, 4, 1]
+    heap_sort(array)
+    nose.tools.assert_equals([1, 2, 2, 4, 4, 5, 12, 17], array)
