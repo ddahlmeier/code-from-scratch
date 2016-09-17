@@ -1,5 +1,22 @@
-"""Trees in python."""
+"""Trees in python.
+Basic data types and algorithms for binary search trees and red-black trees
+https://en.wikipedia.org/wiki/Red%E2%80%93black_tree
+"""
+
 # Author: Daniel Dahlmeier <ddahlmeier@gmail.com>
+
+# Red black trees properties
+# 1. A node is either red or black.
+# 2. The root is black. This rule is sometimes omitted. Since the root
+# can always be changed from red to black, but not necessarily vice
+# versa, this rule has little effect on analysis.
+# 3. All leaves (NIL) are black.
+# 4. If a node is red, then both its children are black.
+# 5. Every path from a given node to any of its descendant NIL nodes
+# contains the same number of black nodes. Some definitions: the
+# number of black nodes from the root to a node is the node's black
+# depth; the uniform number of black nodes in all paths from root to
+# the leaves is called the black-height of the red-black tree
 
 
 import random
@@ -25,6 +42,152 @@ class BinaryNode(Node):
 
     def __repr__(self):
         return "<BinaryNode value = %s>" % self.value
+
+
+class RedBlackNode(BinaryNode):
+    """red-black tree node"""
+
+    def __init__(self, value, color):
+        super(RedBlackNode, self).__init__(value)
+        self.children = [None, None]
+        self.left = self.children[0]
+        self.right = self.children[1]
+        self.color = color
+
+    def __repr__(self):
+        return "<RedBlackNode value = %s color=%s>" % (self.value, self.color)
+
+
+def grandparent(node):
+    if node.parent and node.parent.parent:
+        return node.parent.parent
+    else:
+        return None
+
+def uncle(node):
+    g = grandparent(node)
+    if g is None:
+        return None
+    return g.right if n.parent == g.left else g.left
+
+
+def insert(node, value):
+    """insert a new value into red-black tree rooted at node"""
+    if node.value > value:
+        # insert left
+        if node.left:
+            insert(node.left, value)
+        else:
+            # add new node and color it red
+            node.left = RedBlackNode(value, "red")
+            node.left.parent = node
+            # ensure that red-black properties are preserved
+            rb_insert_case1(node.left)
+    elif node.value < value:
+        # insert right
+        if node.right:
+            insert(node.right, value)
+        else:
+            # add new node and color it red
+            node.right = RedBlackNode(value, "red")
+            node.right.parent = node
+            # ensure that red-black properties are preserved
+            rb_insert_case1(node.right)
+    else:
+        # value already exists, do nothing
+        pass
+
+    
+def insert_case1(node):
+    """current node is root of the tree. repaint it black to satify property 2"""
+    if node.parent == None:
+        node.color = "black"
+    else:
+        insert_case2(node)
+        
+
+def insert_case2(node):
+    """current node's parent is black"""
+    if node.parent.color == "black":
+        # Tree is still valid
+        return
+    else:
+        insert_case3(node)
+
+    
+def insert_case3(node):
+    """both the parent and the uncle are red, repaint parent and uncle
+    black and grandparent black"""
+    u = uncle(node)
+    if uncle and uncle.color == "red":
+        node.parent.color = "black"
+        u.color = "black"
+        g = grandparent(node)
+        g.color = "red"
+        insert_case1(g)
+    else:
+        insert_case4(node)
+
+
+def insert_case4(node):
+    """parent is red but uncle is black, do a left (or right) rotation"""
+    g = grandparent(node)
+    if node == node.parent.right and node.parent == g.left:
+        # rotate left
+        saved_p = g.left
+        saved_left = node.left
+        g.left = node
+        node.parent = g
+        node.left = saved_p
+        saved_p.parent = node
+        saved_p.right = saved_left
+        saved_left.parent = saved_p
+        node = nodel.left
+    elif node == node.parent.left and node.parent == g.right:
+        # rotate right
+        saved_p = g.right
+        saved_right = node.right
+        g.right = node
+        node.parent = g
+        node.right = saved_p
+        saved_p.parent = node
+        saved_p.left = saved_right
+        saved_right.parent = saved_p
+        node = nodel.right
+    insert_case5(node)
+
+
+def rotate_right(node):
+    """right rotation"""
+    saved_p = g.left
+    saved_right = saved_p.right
+    g.left = saved_p.right
+    saved_p.right.parent = g
+    saved_p.right = node
+    saved_p.parent = node.parent
+    node.parent = saved_p
+
+
+def rotate_left(node):
+    """left rotation"""
+    saved_p = g.left
+    saved_right = saved_p.right
+    g.left = saved_p.right
+    saved_p.right.parent = g
+    saved_p.right = node
+    saved_p.parent = node.parent
+    node.parent = saved_p
+
+    
+def insert_case5(node):
+    """parent is red but uncle is black, do a left (or right) rotation"""
+    g = grandparetn(node)
+    node.parent.color = "black"
+    g.color = "red"
+    if (node == node.parent.left):
+        rotate_right(g)
+    else:
+        rotate_left(g)
 
 
 def depth_first_search(node, value):
@@ -85,6 +248,4 @@ def print_tree(node, space=""):
         print "%s  -" % space
 
 
-if __name__ == "__main__":
-    tree = BinaryNode(42)
-    print tree.children
+
