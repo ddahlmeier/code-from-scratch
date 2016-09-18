@@ -254,6 +254,15 @@ def print_tree(node, space=""):
         print "%s  -" % space
 
 
+class TrieNode(object):
+    """ trie (prefix-tree) node implementation """
+
+    def __init__(self, value):
+        """ initialize trie node with some payload value"""
+        self.value = value
+        self.children = {}
+
+
 def make_balanced_tree(height, n=2):
     """ create a balanced n-ary tree"""
     root = Node(0, [])
@@ -268,9 +277,37 @@ def make_balanced_tree(height, n=2):
     return root
 
 
+def make_trie(iterables):
+    """ construct a trie from a set of iterables"""
+    root = TrieNode(0)
+    for iterable in iterables:
+        node = root
+        for item in iterable:
+            if item not in node.children.iteritems():
+                node.children[item] = TrieNode(0)
+            node = node.children[item]
+    return root
+
+
+def print_trie(trie):
+    """ construct a trie from a set of iterables"""
+    stack = [('ROOT', trie, '')]
+    while stack:
+        key, node, indent = stack.pop()
+        print "%s [%s] value: %s" % (indent, key, node.value)
+        for key, child in node.children.iteritems():
+            stack.append((key, child, indent + "  "))
+
+
 if __name__ == "__main__":
+    print("binary tree of height 3")
     tree = make_balanced_tree(3, 2)
     print(tree)
 
+    print("3-ary tree of height 3")
     tree = make_balanced_tree(3, 3)
     print(tree)
+
+    print('trie storing the words "awesome", "mix", "tape", "max", "table"')
+    trie = make_trie(["awesome", "mix", "tape", "max", "table"])
+    print_trie(trie)
