@@ -282,10 +282,14 @@ def make_trie(iterables):
     root = TrieNode(0)
     for iterable in iterables:
         node = root
+        print "adding", iterable
         for item in iterable:
-            if item not in node.children.iteritems():
+            if item not in node.children.keys():
                 node.children[item] = TrieNode(0)
+                print "add", item
             node = node.children[item]
+            # increment counter for node
+            node.value +=1 
     return root
 
 
