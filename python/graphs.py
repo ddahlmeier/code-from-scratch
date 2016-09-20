@@ -5,6 +5,13 @@
 from abc import ABCMeta, abstractmethod
 import numpy as np
 import random
+from itertools import chain
+from operator import itemgetter
+
+
+def unique(iter):
+    """Helper class to return list of unique items in iter"""
+    return list(set(iter))
 
 
 class Graph(object):
@@ -27,6 +34,10 @@ class Graph(object):
     def set_edge(self, frm, to):
         pass
 
+    @abstractmethod
+    def nodes(self):
+        pass
+
 
 class GraphMatrix(Graph):
     """ Graph stored as a two dimensional adjacency matrix, nodes are
@@ -44,6 +55,9 @@ class GraphMatrix(Graph):
     def set_edge(self, frm, to, weight):
         self.adjacency[frm, to] = weight
 
+    def nodes(self):
+        return range(self.adjacency.shape[0])
+
 
 class GraphDict(Graph):
     """ Graph stored as a adjacency list with dicts"""
@@ -59,12 +73,17 @@ class GraphDict(Graph):
             return np.inf
 
     def adjacent(self, frm):
-        return self.adjacency[frm].keys()
+        node = self.adjacency.get(frm, None)
+        return node.keys() if node else []
 
     def set_edge(self, frm, to, weight):
         if frm not in self.adjacency:
             self.adjacency[frm] = {}
         self.adjacency[frm][to] = weight
+
+    def nodes(self):
+        return unique(chain(self.adjacency.keys(),
+                            *(d.keys() for d in self.adjacency.values())))
 
 
 def depth_first_search(graph, start, end):
@@ -72,11 +91,16 @@ def depth_first_search(graph, start, end):
     return true if value is found otherwise false
     """
     stack = [start]
+    visited = {n: False for n in graph.nodes()}
+    print "depth first search", start, "->", end
     while stack:
         node = stack.pop()
+        print "visit", node
+        visited[node] = True
         if node is end:
             return True
-        for to in graph.adjacent(node):
+        for to in (neighbour for neighbour in graph.adjacent(node)
+                   if not visited[neighbour]):
             stack.append(to)
     return False
 
