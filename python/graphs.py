@@ -105,6 +105,25 @@ def depth_first_search(graph, start, end):
     return False
 
 
+def breath_first_search(graph, start, end):
+    """traverse graph in breath first search from start to end
+    return true if value is found otherwise false
+    """
+    queue = [start]
+    visited = {n: False for n in graph.nodes()}
+    print "breath first search", start, "->", end
+    while queue:
+        node = queue.pop(0)
+        print "visit", node
+        visited[node] = True
+        if node is end:
+            return True
+        for to in (neighbour for neighbour in graph.adjacent(node)
+                   if not visited[neighbour]):
+            queue.append(to)
+    return False
+
+
 def random_graph(Graph, n_nodes, n_edges):
     if Graph is GraphMatrix:
         g = GraphMatrix(n_nodes)
