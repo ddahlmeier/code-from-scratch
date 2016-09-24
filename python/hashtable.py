@@ -1,8 +1,10 @@
 """Hashtbale in python."""
 
+# Author: Daniel Dahlmeier <ddahlmeier@gmail.com>
+
 
 class HashTable(object):
-    """simple hashtable in python"""
+    """hashtable implemented as an array with open addressing"""
 
     def __init__(self):
         self.size = 8
@@ -19,29 +21,29 @@ class HashTable(object):
                 self.data[hashvalue] = data  # replace
             else:
                 nextslot = self.rehash(hashvalue, len(self.slots))
-                while self.slots[nextslot] != None and \
+                while self.slots[nextslot] is not None and \
                         self.slots[nextslot] != key:
                     nextslot = self.rehash(nextslot, len(self.slots))
-                if self.slots[nextslot] == None:
+                if self.slots[nextslot] is None:
                     self.slots[nextslot] = key
                     self.data[nextslot] = data
                 else:
                     self.data[nextslot] = data
 
     def hashfunction(self, key, size):
-        return key%size
+        return hash(key) % size
 
     def rehash(self, oldhash, size):
         return (oldhash + 1) % size
 
     def get(self, key):
         startslot = self.hashfunction(key, len(self.slots))
-        
+
         data = None
         stop = False
         found = False
         position = startslot
-        while self.slots[position] != None and \
+        while self.slots[position] is not None and \
                 not found and not stop:
             if self.slots[position] == key:
                 found = True
