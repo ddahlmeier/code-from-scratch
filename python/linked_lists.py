@@ -69,6 +69,7 @@ def k_last(head, k):
 
 
 def is_palindrome(head):
+    """check if list is a palindrome"""
     fast = head
     slow = head
     stack = []
@@ -79,10 +80,45 @@ def is_palindrome(head):
     if fast:
         # odd lenght, slow is at the middle node
         slow = slow.next
-    
+
     # compare reversed first half with second half of the list
     while slow:
         if stack.pop() != slow.data:
             return False
         slow = slow.next
     return True
+
+
+def intersection(head1, head2):
+    """check if two list intersect, return the intersecting node"""
+    node1 = head1
+    node2 = head2
+    length1 = 0
+    length2 = 0
+    while node1.next:
+        node1 = node1.next
+        length1 += 1
+    while node2.next:
+        node2 = node2.next
+        length2 += 1
+    if node1 is not node2:
+        # lists do not intersect
+        print "no intersection"
+        return None
+    node1 = head1
+    node2 = head2
+    # chop off the uneven start lenght
+    if length1 > length2:
+        diff = length1 - length2
+        for i in xrange(diff):
+            node1 = node1.next
+    elif length2 > length1:
+        diff = length2 - length1
+        for i in xrange(diff):
+            node2 = node2.next
+    # walk down both lists until we find the intersection
+    while(node1 and node2):
+        if node1 is node2:
+            return node1
+        node1 = node1.next
+        node2 = node2.next
