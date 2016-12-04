@@ -1,5 +1,5 @@
 /**
- * List examples in Java
+ * Reference examples in java
 **/
 
 class A {
