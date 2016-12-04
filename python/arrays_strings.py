@@ -115,6 +115,7 @@ def zero_matrix(matrix):
                     out[i, k] = 0
     return out
 
+
 if __name__ == "__main__":
     print "1.1 Is Unique"
     print "  is_unique('bar') = ", is_unique('bar')
@@ -145,3 +146,7 @@ if __name__ == "__main__":
 
     print "1.6 string compression"
     print "  string_compr('aabbb') = ", string_compr('aabbb')
+
+
+    print "1.7 rotate matrix"
+    print "  rotate_matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) = \n", rotate_matrix(np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
